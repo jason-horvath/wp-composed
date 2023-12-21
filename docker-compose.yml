@@ -1,0 +1,48 @@
+version: '4.24.2'
+
+services:
+  # Nginx PHP Container
+  wp-composed-web:
+    build: .
+    container_name: wp-composed-wordpress-web
+    ports:
+      - '4500:80'
+    volumes:
+      - /var/www/html/cms
+      - .:/var/www/html
+      - ./docker/nginx/fastcgi-php.conf:/etc/nginx/snippets/fastcgi-php.conf
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress_user
+      MYSQL_PASSWORD: wordpress_password
+
+  # MySQL Container
+  wp-composed-mysql:
+    image: mysql:8.2
+    container_name: wp-composed-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress_user
+      MYSQL_PASSWORD: wordpress_password
+    ports:
+      - '4506:3306'
+    volumes:
+      - wp-composed-db-data:/var/lib/mysql
+
+  # PHP MyAdmin Container
+  wp-composed-phpmyadmin:
+    image: linuxserver/phpmyadmin
+    container_name: wp-composed-phpmyadmin
+    environment:
+      PMA_HOST: wp-composed-mysql
+      PMA_USER: wordpress_user
+      PMA_PASSWORD: wordpress_password
+      PMA_PORT: 3306
+    ports:
+      - '4600:80'
+
+# Volumes for containers
+volumes:
+  wp-composed-db-data:
