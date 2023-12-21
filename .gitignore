@@ -1,0 +1,7 @@
+.env
+.vscode
+/cms/core/
+/cms/content/
+/cms/vendor/
+/cms/content/uploads/
+supervisord.log
